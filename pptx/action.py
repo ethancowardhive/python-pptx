@@ -2,10 +2,11 @@
 
 """Objects related to mouse click and hover actions on a shape or text."""
 
+from functools import cached_property
+
 from pptx.enum.action import PP_ACTION
 from pptx.opc.constants import RELATIONSHIP_TYPE as RT
 from pptx.shapes import Subshape
-from pptx.util import lazyproperty
 
 
 class ActionSetting(Subshape):
@@ -60,7 +61,7 @@ class ActionSetting(Subshape):
             "program": PP_ACTION.RUN_PROGRAM,
         }.get(action_verb, PP_ACTION.NONE)
 
-    @lazyproperty
+    @cached_property
     def hyperlink(self):
         """
         A |Hyperlink| object representing the hyperlink action defined on
@@ -148,14 +149,14 @@ class ActionSetting(Subshape):
             return self._element.hlinkHover
         return self._element.hlinkClick
 
-    @lazyproperty
+    @cached_property
     def _slide(self):
         """
         Reference to the slide containing the shape having this click action.
         """
         return self.part.slide
 
-    @lazyproperty
+    @cached_property
     def _slide_index(self):
         """
         Position in the slide collection of the slide containing the shape
@@ -163,7 +164,7 @@ class ActionSetting(Subshape):
         """
         return self._slides.index(self._slide)
 
-    @lazyproperty
+    @cached_property
     def _slides(self):
         """
         Reference to the slide collection for this presentation.

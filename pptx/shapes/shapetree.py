@@ -2,6 +2,7 @@
 
 """The shape tree, the structure that holds a slide's shapes."""
 
+from functools import cached_property
 import os
 
 from pptx.compat import BytesIO
@@ -31,7 +32,7 @@ from pptx.shapes.placeholder import (
     TablePlaceholder,
 )
 from pptx.shared import ParentedElementProxy
-from pptx.util import Emu, lazyproperty
+from pptx.util import Emu
 
 # +-- _BaseShapes
 # |   |
@@ -912,7 +913,7 @@ class _MoviePicElementCreator(object):
         """
         return self._video_part_rIds[0]
 
-    @lazyproperty
+    @cached_property
     def _pic(self):
         """Return the new `p:pic` element referencing the video."""
         return CT_Picture.new_video_pic(
@@ -927,7 +928,7 @@ class _MoviePicElementCreator(object):
             self._cy,
         )
 
-    @lazyproperty
+    @cached_property
     def _poster_frame_image_file(self):
         """Return the image file for video placeholder image.
 
@@ -939,7 +940,7 @@ class _MoviePicElementCreator(object):
             return BytesIO(SPEAKER_IMAGE_BYTES)
         return poster_frame_file
 
-    @lazyproperty
+    @cached_property
     def _poster_frame_rId(self):
         """Return the rId of relationship to poster frame image.
 
@@ -964,12 +965,12 @@ class _MoviePicElementCreator(object):
         """Return SlidePart object for slide containing this movie."""
         return self._shapes.part
 
-    @lazyproperty
+    @cached_property
     def _video(self):
         """Return a |Video| object containing the movie file."""
         return Video.from_path_or_file_like(self._movie_file, self._mime_type)
 
-    @lazyproperty
+    @cached_property
     def _video_part_rIds(self):
         """Return the rIds for relationships to media part for video.
 
@@ -1021,7 +1022,7 @@ class _OleObjectElementCreator(object):
             shapes, shape_id, ole_object_file, prog_id, x, y, cx, cy, icon_file
         )._graphicFrame
 
-    @lazyproperty
+    @cached_property
     def _graphicFrame(self):
         """Newly-created `p:graphicFrame` element referencing embedded OLE-object."""
         return CT_GraphicalObjectFrame.new_ole_object_graphicFrame(
@@ -1036,7 +1037,7 @@ class _OleObjectElementCreator(object):
             self._cy,
         )
 
-    @lazyproperty
+    @cached_property
     def _cx(self):
         """Emu object specifying width of "show-as-icon" image for OLE shape."""
         # --- a user-specified width overrides any default ---
@@ -1051,7 +1052,7 @@ class _OleObjectElementCreator(object):
             else Emu(965200)
         )
 
-    @lazyproperty
+    @cached_property
     def _cy(self):
         """Emu object specifying height of "show-as-icon" image for OLE shape."""
         # --- a user-specified width overrides any default ---
@@ -1066,7 +1067,7 @@ class _OleObjectElementCreator(object):
             else Emu(609600)
         )
 
-    @lazyproperty
+    @cached_property
     def _icon_image_file(self):
         """Reference to image file containing icon to show in lieu of this object.
 
@@ -1087,13 +1088,13 @@ class _OleObjectElementCreator(object):
         _thisdir = os.path.split(__file__)[0]
         return os.path.abspath(os.path.join(_thisdir, "..", "templates", icon_filename))
 
-    @lazyproperty
+    @cached_property
     def _icon_rId(self):
         """str rId like "rId7" of rel to icon (image) representing OLE-object part."""
         _, rId = self._slide_part.get_or_add_image_part(self._icon_image_file)
         return rId
 
-    @lazyproperty
+    @cached_property
     def _ole_object_rId(self):
         """str rId like "rId6" of relationship to embedded ole_object part.
 
@@ -1104,7 +1105,7 @@ class _OleObjectElementCreator(object):
             self._prog_id_arg, self._ole_object_file
         )
 
-    @lazyproperty
+    @cached_property
     def _progId(self):
         """str like "Excel.Sheet.12" identifying program used to open object.
 
@@ -1117,7 +1118,7 @@ class _OleObjectElementCreator(object):
         # --- has specified it explicitly (as str)
         return prog_id_arg.progId if prog_id_arg in PROG_ID else prog_id_arg
 
-    @lazyproperty
+    @cached_property
     def _shape_name(self):
         """str name like "Object 1" for the embedded ole_object shape.
 
@@ -1125,7 +1126,7 @@ class _OleObjectElementCreator(object):
         """
         return "Object %d" % (self._shape_id - 1)
 
-    @lazyproperty
+    @cached_property
     def _slide_part(self):
         """SlidePart object for this slide."""
         return self._shapes.part

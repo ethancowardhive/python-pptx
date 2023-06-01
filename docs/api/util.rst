@@ -5,7 +5,7 @@
 
 .. automodule:: pptx.util
    :members:
-   :exclude-members: Collection, lazyproperty, to_unicode
+   :exclude-members: Collection, to_unicode
    :member-order: bysource
    :undoc-members:
    :show-inheritance:

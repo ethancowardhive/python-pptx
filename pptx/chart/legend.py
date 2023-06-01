@@ -6,9 +6,10 @@ Legend of a chart.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from functools import cached_property
+
 from ..enum.chart import XL_LEGEND_POSITION
 from ..text.text import Font
-from ..util import lazyproperty
 
 
 class Legend(object):
@@ -20,7 +21,7 @@ class Legend(object):
         super(Legend, self).__init__()
         self._element = legend_elm
 
-    @lazyproperty
+    @cached_property
     def font(self):
         """
         The |Font| object that provides access to the text properties for

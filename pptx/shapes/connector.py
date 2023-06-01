@@ -9,10 +9,12 @@ elbows, or can be curved.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from functools import cached_property
+
 from pptx.dml.line import LineFormat
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.shapes.base import BaseShape
-from pptx.util import Emu, lazyproperty
+from pptx.util import Emu
 
 
 class Connector(BaseShape):
@@ -224,7 +226,7 @@ class Connector(BaseShape):
         """Helper method required by |LineFormat|."""
         return self._element.spPr.get_or_add_ln()
 
-    @lazyproperty
+    @cached_property
     def line(self):
         """|LineFormat| instance for this connector.
 

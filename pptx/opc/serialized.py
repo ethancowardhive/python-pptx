@@ -2,6 +2,7 @@
 
 """API for reading/writing serialized Open Packaging Convention (OPC) package."""
 
+from functools import cached_property
 import os
 import posixpath
 import zipfile
@@ -13,7 +14,6 @@ from pptx.opc.oxml import CT_Types, serialize_part_xml
 from pptx.opc.packuri import CONTENT_TYPES_URI, PACKAGE_URI, PackURI
 from pptx.opc.shared import CaseInsensitiveDict
 from pptx.opc.spec import default_content_types
-from pptx.util import lazyproperty
 
 
 class PackageReader(Container):
@@ -43,7 +43,7 @@ class PackageReader(Container):
         blob_reader, uri = self._blob_reader, partname.rels_uri
         return blob_reader[uri] if uri in blob_reader else None
 
-    @lazyproperty
+    @cached_property
     def _blob_reader(self):
         """|_PhysPkgReader| subtype providing read access to the package file."""
         return _PhysPkgReader.factory(self._pkg_file)
@@ -177,7 +177,7 @@ class _ZipPkgReader(_PhysPkgReader):
             raise KeyError("no member '%s' in package" % pack_uri)
         return self._blobs[pack_uri]
 
-    @lazyproperty
+    @cached_property
     def _blobs(self):
         """dict mapping partname to package part binaries."""
         with zipfile.ZipFile(self._pkg_file, "r") as z:
@@ -219,7 +219,7 @@ class _ZipPkgWriter(_PhysPkgWriter):
         """Write `blob` to zip package with membername corresponding to `pack_uri`."""
         self._zipf.writestr(pack_uri.membername, blob)
 
-    @lazyproperty
+    @cached_property
     def _zipf(self):
         """`ZipFile` instance open for writing."""
         return zipfile.ZipFile(self._pkg_file, "w", compression=zipfile.ZIP_DEFLATED)
@@ -240,7 +240,7 @@ class _ContentTypesItem(object):
         """
         return cls(parts)._xml
 
-    @lazyproperty
+    @cached_property
     def _xml(self):
         """lxml.etree._Element containing the content-types item.
 
@@ -259,7 +259,7 @@ class _ContentTypesItem(object):
 
         return _types_elm
 
-    @lazyproperty
+    @cached_property
     def _defaults_and_overrides(self):
         """pair of dict (defaults, overrides) accounting for all parts.
 

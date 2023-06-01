@@ -2,11 +2,11 @@
 
 """Main presentation object."""
 import copy
+from functools import cached_property
 
 from pptx.opc.package import _Relationships
 from pptx.shared import PartElementProxy
 from pptx.slide import SlideMasters, Slides
-from pptx.util import lazyproperty
 
 
 class Presentation(PartElementProxy):
@@ -76,7 +76,7 @@ class Presentation(PartElementProxy):
         """
         return self.slide_masters[0]
 
-    @lazyproperty
+    @cached_property
     def slide_masters(self):
         """
         Sequence of |SlideMaster| objects belonging to this presentation
@@ -99,7 +99,7 @@ class Presentation(PartElementProxy):
         sldSz = self._element.get_or_add_sldSz()
         sldSz.cx = width
 
-    @lazyproperty
+    @cached_property
     def slides(self):
         """
         |Slides| object containing the slides in this presentation.

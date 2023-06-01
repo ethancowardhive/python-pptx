@@ -8,13 +8,14 @@ layered over a bar plot.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from functools import cached_property
+
 from .category import Categories
 from .datalabel import DataLabels
 from ..enum.chart import XL_CHART_TYPE as XL
 from ..oxml.ns import qn
 from ..oxml.simpletypes import ST_BarDir, ST_Grouping
 from .series import SeriesCollection
-from ..util import lazyproperty
 
 
 class _BasePlot(object):
@@ -29,7 +30,7 @@ class _BasePlot(object):
         self._element = xChart
         self._chart = chart
 
-    @lazyproperty
+    @cached_property
     def categories(self):
         """
         Returns a |category.Categories| sequence object containing
@@ -88,7 +89,7 @@ class _BasePlot(object):
                 dLbls = self._element._add_dLbls()
                 dLbls.showVal.val = True
 
-    @lazyproperty
+    @cached_property
     def series(self):
         """
         A sequence of |Series| objects representing the series in this plot,

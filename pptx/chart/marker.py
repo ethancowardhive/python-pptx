@@ -7,9 +7,10 @@ markers.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from functools import cached_property
+
 from ..dml.chtfmt import ChartFormat
 from ..shared import ElementProxy
-from ..util import lazyproperty
 
 
 class Marker(ElementProxy):
@@ -18,7 +19,7 @@ class Marker(ElementProxy):
     a line-type chart.
     """
 
-    @lazyproperty
+    @cached_property
     def format(self):
         """
         The |ChartFormat| instance for this marker, providing access to shape

@@ -3,6 +3,7 @@
 """ChartData and related objects."""
 
 import datetime
+from functools import cached_property
 from numbers import Number
 
 from pptx.chart.xlsx import (
@@ -12,7 +13,6 @@ from pptx.chart.xlsx import (
 )
 from pptx.chart.xmlwriter import ChartXmlWriter
 from pptx.compat import Sequence
-from pptx.util import lazyproperty
 
 
 class _BaseChartData(Sequence):
@@ -331,7 +331,7 @@ class CategoryChartData(_BaseChartData):
         """
         return self._workbook_writer.values_ref(series)
 
-    @lazyproperty
+    @cached_property
     def _workbook_writer(self):
         """
         The worksheet writer object to which layout and writing of the Excel
@@ -699,7 +699,7 @@ class XyChartData(_BaseChartData):
         self.append(series_data)
         return series_data
 
-    @lazyproperty
+    @cached_property
     def _workbook_writer(self):
         """
         The worksheet writer object to which layout and writing of the Excel
@@ -732,7 +732,7 @@ class BubbleChartData(XyChartData):
         """
         return self._workbook_writer.bubble_sizes_ref(series)
 
-    @lazyproperty
+    @cached_property
     def _workbook_writer(self):
         """
         The worksheet writer object to which layout and writing of the Excel

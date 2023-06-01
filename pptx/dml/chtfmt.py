@@ -8,10 +8,11 @@ chart elements.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from functools import cached_property
+
 from .fill import FillFormat
 from .line import LineFormat
 from ..shared import ElementProxy
-from ..util import lazyproperty
 
 
 class ChartFormat(ElementProxy):
@@ -23,7 +24,7 @@ class ChartFormat(ElementProxy):
     provided by the :attr:`format` property on the target axis, series, etc.
     """
 
-    @lazyproperty
+    @cached_property
     def fill(self):
         """
         |FillFormat| instance for this object, providing access to fill
@@ -32,7 +33,7 @@ class ChartFormat(ElementProxy):
         spPr = self._element.get_or_add_spPr()
         return FillFormat.from_fill_parent(spPr)
 
-    @lazyproperty
+    @cached_property
     def line(self):
         """
         The |LineFormat| object providing access to the visual properties of

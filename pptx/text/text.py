@@ -2,6 +2,8 @@
 
 """Text-related objects such as TextFrame and Paragraph."""
 
+from functools import cached_property
+
 from pptx.compat import to_unicode
 from pptx.dml.fill import FillFormat
 from pptx.enum.dml import MSO_FILL
@@ -12,7 +14,7 @@ from pptx.oxml.simpletypes import ST_TextWrappingType
 from pptx.shapes import Subshape
 from pptx.text.fonts import FontFiles
 from pptx.text.layout import TextFitter
-from pptx.util import Centipoints, Emu, lazyproperty, Pt
+from pptx.util import Centipoints, Emu, Pt
 
 
 class TextFrame(Subshape):
@@ -305,7 +307,7 @@ class Font(object):
     def bold(self, value):
         self._rPr.b = value
 
-    @lazyproperty
+    @cached_property
     def color(self):
         """
         The |ColorFormat| instance that provides access to the color settings
@@ -315,7 +317,7 @@ class Font(object):
             self.fill.solid()
         return self.fill.fore_color
 
-    @lazyproperty
+    @cached_property
     def fill(self):
         """
         |FillFormat| instance for this font, providing access to fill
@@ -683,7 +685,7 @@ class _Run(Subshape):
         rPr = self._r.get_or_add_rPr()
         return Font(rPr)
 
-    @lazyproperty
+    @cached_property
     def hyperlink(self):
         """
         |_Hyperlink| instance acting as proxy for any ``<a:hlinkClick>``

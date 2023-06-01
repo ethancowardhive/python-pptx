@@ -2,12 +2,11 @@
 
 """Objects related to system font file lookup."""
 
+from functools import cached_property
 import os
 import sys
 
 from struct import calcsize, unpack_from
-
-from ..util import lazyproperty
 
 
 class FontFiles(object):
@@ -150,7 +149,7 @@ class _Font(object):
         """
         return self._tables["name"].family_name
 
-    @lazyproperty
+    @cached_property
     def _fields(self):
         """5-tuple containing the fields read from the font file header.
 
@@ -172,7 +171,7 @@ class _Font(object):
             tag, checksum, off, len_ = unpack_from(tmpl, bufr, offset)
             yield tag.decode("utf-8"), off, len_
 
-    @lazyproperty
+    @cached_property
     def _tables(self):
         """
         A mapping of OpenType table tag, e.g. 'name', to a table object
@@ -261,7 +260,7 @@ class _HeadTable(_BaseTable):
         """
         return bool(self._macStyle & 2)
 
-    @lazyproperty
+    @cached_property
     def _fields(self):
         """
         A 17-tuple containing the fields in this table.
@@ -378,7 +377,7 @@ class _NameTable(_BaseTable):
         raw_name = self._raw_name_string(bufr, strings_offset, name_str_offset, length)
         return self._decode_name(raw_name, platform_id, encoding_id)
 
-    @lazyproperty
+    @cached_property
     def _table_bytes(self):
         """
         The binary contents of this name table.
@@ -393,7 +392,7 @@ class _NameTable(_BaseTable):
         """
         return unpack_from(">HHH", self._table_bytes)
 
-    @lazyproperty
+    @cached_property
     def _names(self):
         """A mapping of (platform_id, name_id) keys to string names for this font."""
         return dict(self._iter_names())

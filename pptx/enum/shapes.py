@@ -2,6 +2,8 @@
 
 """Enumerations used by shapes and related objects."""
 
+from functools import cached_property
+
 from pptx.enum.base import (
     alias,
     Enumeration,
@@ -10,7 +12,6 @@ from pptx.enum.base import (
     XmlEnumeration,
     XmlMappedEnumMember,
 )
-from pptx.util import lazyproperty
 
 
 @alias("MSO_SHAPE")
@@ -867,17 +868,17 @@ class _ProgIdEnum(object):
     def __repr__(self):
         return "%s.PROG_ID" % __name__
 
-    @lazyproperty
+    @cached_property
     def DOCX(self):
         return self.Member("DOCX", "Word.Document.12", "docx-icon.emf", 965200, 609600)
 
-    @lazyproperty
+    @cached_property
     def PPTX(self):
         return self.Member(
             "PPTX", "PowerPoint.Show.12", "pptx-icon.emf", 965200, 609600
         )
 
-    @lazyproperty
+    @cached_property
     def XLSX(self):
         return self.Member("XLSX", "Excel.Sheet.12", "xlsx-icon.emf", 965200, 609600)
 

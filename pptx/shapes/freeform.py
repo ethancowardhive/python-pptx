@@ -4,8 +4,9 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from functools import cached_property
+
 from pptx.compat import Sequence
-from pptx.util import lazyproperty
 
 
 class FreeformBuilder(Sequence):
@@ -137,7 +138,7 @@ class FreeformBuilder(Sequence):
         """Add a |_LineSegment| operation to the drawing sequence."""
         self._drawing_operations.append(_LineSegment.new(self, x, y))
 
-    @lazyproperty
+    @cached_property
     def _drawing_operations(self):
         """Return the sequence of drawing operation objects for freeform."""
         return []

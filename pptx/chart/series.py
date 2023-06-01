@@ -4,13 +4,14 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from functools import cached_property
+
 from pptx.chart.datalabel import DataLabels
 from pptx.chart.marker import Marker
 from pptx.chart.point import BubblePoints, CategoryPoints, XyPoints
 from pptx.compat import Sequence
 from pptx.dml.chtfmt import ChartFormat
 from pptx.oxml.ns import qn
-from pptx.util import lazyproperty
 
 
 class _BaseSeries(object):
@@ -23,7 +24,7 @@ class _BaseSeries(object):
         self._element = ser
         self._ser = ser
 
-    @lazyproperty
+    @cached_property
     def format(self):
         """
         The |ChartFormat| instance for this series, providing access to shape
@@ -54,12 +55,12 @@ class _BaseSeries(object):
 class _BaseCategorySeries(_BaseSeries):
     """Base class for |BarSeries| and other category chart series classes."""
 
-    @lazyproperty
+    @cached_property
     def data_labels(self):
         """|DataLabels| object controlling data labels for this series."""
         return DataLabels(self._ser.get_or_add_dLbls())
 
-    @lazyproperty
+    @cached_property
     def points(self):
         """
         The |CategoryPoints| object providing access to individual data
@@ -90,7 +91,7 @@ class _MarkerMixin(object):
     line-type charts are Line, XY, and Radar.
     """
 
-    @lazyproperty
+    @cached_property
     def marker(self):
         """
         The |Marker| instance for this series, providing access to data point
@@ -185,7 +186,7 @@ class XySeries(_BaseSeries, _MarkerMixin):
         for idx in range(yVal.ptCount_val):
             yield yVal.pt_v(idx)
 
-    @lazyproperty
+    @cached_property
     def points(self):
         """
         The |XyPoints| object providing access to individual data points in
@@ -207,7 +208,7 @@ class BubbleSeries(XySeries):
     A data point series belonging to a bubble plot.
     """
 
-    @lazyproperty
+    @cached_property
     def points(self):
         """
         The |BubblePoints| object providing access to individual data point

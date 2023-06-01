@@ -4,10 +4,11 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from functools import cached_property
+
 from pptx.dml.effect import ShadowFormat
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.shapes.base import BaseShape
-from pptx.util import lazyproperty
 
 
 class GroupShape(BaseShape):
@@ -31,7 +32,7 @@ class GroupShape(BaseShape):
         """
         return False
 
-    @lazyproperty
+    @cached_property
     def shadow(self):
         """|ShadowFormat| object representing shadow effect for this group.
 
@@ -49,7 +50,7 @@ class GroupShape(BaseShape):
         """
         return MSO_SHAPE_TYPE.GROUP
 
-    @lazyproperty
+    @cached_property
     def shapes(self):
         """|GroupShapes| object for this group.
 

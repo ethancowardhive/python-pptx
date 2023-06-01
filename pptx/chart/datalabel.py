@@ -6,8 +6,9 @@ Data label-related objects.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from functools import cached_property
+
 from ..text.text import Font, TextFrame
-from ..util import lazyproperty
 
 
 class DataLabels(object):
@@ -23,7 +24,7 @@ class DataLabels(object):
         super(DataLabels, self).__init__()
         self._element = dLbls
 
-    @lazyproperty
+    @cached_property
     def font(self):
         """
         The |Font| object that provides access to the text properties for
@@ -154,7 +155,7 @@ class DataLabel(object):
         self._ser = self._element = ser
         self._idx = idx
 
-    @lazyproperty
+    @cached_property
     def font(self):
         """The |Font| object providing text formatting for this data label.
 

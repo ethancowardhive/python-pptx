@@ -4,9 +4,10 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from functools import cached_property
+
 from ..enum.dml import MSO_FILL
 from .fill import FillFormat
-from ..util import Emu, lazyproperty
 
 
 class LineFormat(object):
@@ -20,7 +21,7 @@ class LineFormat(object):
         super(LineFormat, self).__init__()
         self._parent = parent
 
-    @lazyproperty
+    @cached_property
     def color(self):
         """
         The |ColorFormat| instance that provides access to the color settings
@@ -61,7 +62,7 @@ class LineFormat(object):
         ln = self._get_or_add_ln()
         ln.prstDash_val = dash_style
 
-    @lazyproperty
+    @cached_property
     def fill(self):
         """
         |FillFormat| instance for this line, providing access to fill

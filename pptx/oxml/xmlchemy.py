@@ -8,6 +8,7 @@ classes.
 from __future__ import absolute_import, print_function
 
 import re
+from functools import cached_property
 
 from lxml import etree
 
@@ -15,7 +16,6 @@ from . import oxml_parser
 from ..compat import Unicode
 from ..exc import InvalidXmlError
 from .ns import NamespacePrefixedTag, _nsmap, qn
-from ..util import lazyproperty
 
 
 def OxmlElement(nsptag_str, nsmap=None):
@@ -357,7 +357,7 @@ class _BaseChildElement(object):
         property_ = property(self._list_getter, None, None)
         setattr(self._element_cls, prop_name, property_)
 
-    @lazyproperty
+    @cached_property
     def _add_method_name(self):
         return "_add_%s" % self._prop_name
 
@@ -398,7 +398,7 @@ class _BaseChildElement(object):
         )
         return get_child_element
 
-    @lazyproperty
+    @cached_property
     def _insert_method_name(self):
         return "_insert_%s" % self._prop_name
 
@@ -418,11 +418,11 @@ class _BaseChildElement(object):
         )
         return get_child_element_list
 
-    @lazyproperty
+    @cached_property
     def _remove_method_name(self):
         return "_remove_%s" % self._prop_name
 
-    @lazyproperty
+    @cached_property
     def _new_method_name(self):
         return "_new_%s" % self._prop_name
 
@@ -483,11 +483,11 @@ class Choice(_BaseChildElement):
             start = 0
         return self._nsptagname[start:]
 
-    @lazyproperty
+    @cached_property
     def _get_or_change_to_method_name(self):
         return "get_or_change_to_%s" % self._prop_name
 
-    @lazyproperty
+    @cached_property
     def _remove_group_method_name(self):
         return "_remove_%s" % self._group_prop_name
 
@@ -562,7 +562,7 @@ class OneOrMore(_BaseChildElement):
         )
         self._add_to_class(self._public_add_method_name, add_child)
 
-    @lazyproperty
+    @cached_property
     def _public_add_method_name(self):
         """
         add_childElement() is public API for a repeating element, allowing
@@ -639,7 +639,7 @@ class ZeroOrOne(_BaseChildElement):
         ) % self._nsptagname
         self._add_to_class(self._remove_method_name, _remove_child)
 
-    @lazyproperty
+    @cached_property
     def _get_or_add_method_name(self):
         return "get_or_add_%s" % self._prop_name
 
@@ -707,7 +707,7 @@ class ZeroOrOneChoice(_BaseChildElement):
         )
         return get_group_member_element
 
-    @lazyproperty
+    @cached_property
     def _member_nsptagnames(self):
         """
         Sequence of namespace-prefixed tagnames, one for each of the member
@@ -715,7 +715,7 @@ class ZeroOrOneChoice(_BaseChildElement):
         """
         return [choice.nsptagname for choice in self._choices]
 
-    @lazyproperty
+    @cached_property
     def _remove_choice_group_method_name(self):
         return "_remove_%s" % self._prop_name
 

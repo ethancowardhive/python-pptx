@@ -2,6 +2,8 @@
 
 """Slide-related objects, including masters, layouts, and notes."""
 
+from functools import cached_property
+
 from pptx.dml.fill import FillFormat
 from pptx.enum.shapes import PP_PLACEHOLDER
 from pptx.shapes.shapetree import (
@@ -15,13 +17,12 @@ from pptx.shapes.shapetree import (
     SlideShapes,
 )
 from pptx.shared import ElementProxy, ParentedElementProxy, PartElementProxy
-from pptx.util import lazyproperty
 
 
 class _BaseSlide(PartElementProxy):
     """Base class for slide objects, including masters, layouts and notes."""
 
-    @lazyproperty
+    @cached_property
     def background(self):
         """|_Background| object providing slide background properties.
 
@@ -54,7 +55,7 @@ class _BaseMaster(_BaseSlide):
     Provides access to placeholders and regular shapes.
     """
 
-    @lazyproperty
+    @cached_property
     def placeholders(self):
         """
         Instance of |MasterPlaceholders| containing sequence of placeholder
@@ -62,7 +63,7 @@ class _BaseMaster(_BaseSlide):
         """
         return MasterPlaceholders(self._element.spTree, self)
 
-    @lazyproperty
+    @cached_property
     def shapes(self):
         """
         Instance of |MasterShapes| containing sequence of shape objects
@@ -139,7 +140,7 @@ class NotesSlide(_BaseSlide):
             return None
         return notes_placeholder.text_frame
 
-    @lazyproperty
+    @cached_property
     def placeholders(self):
         """
         An instance of |NotesSlidePlaceholders| containing the sequence of
@@ -147,7 +148,7 @@ class NotesSlide(_BaseSlide):
         """
         return NotesSlidePlaceholders(self.element.spTree, self)
 
-    @lazyproperty
+    @cached_property
     def shapes(self):
         """
         An instance of |NotesSlideShapes| containing the sequence of shape
@@ -206,7 +207,7 @@ class Slide(_BaseSlide):
         """
         return self.part.notes_slide
 
-    @lazyproperty
+    @cached_property
     def placeholders(self):
         """
         Instance of |SlidePlaceholders| containing sequence of placeholder
@@ -214,7 +215,7 @@ class Slide(_BaseSlide):
         """
         return SlidePlaceholders(self._element.spTree, self)
 
-    @lazyproperty
+    @cached_property
     def shapes(self):
         """
         Instance of |SlideShapes| containing sequence of shape objects
@@ -325,7 +326,7 @@ class SlideLayout(_BaseSlide):
             if ph.element.ph_type not in latent_ph_types:
                 yield ph
 
-    @lazyproperty
+    @cached_property
     def placeholders(self):
         """
         Instance of |LayoutPlaceholders| containing sequence of placeholder
@@ -333,7 +334,7 @@ class SlideLayout(_BaseSlide):
         """
         return LayoutPlaceholders(self._element.spTree, self)
 
-    @lazyproperty
+    @cached_property
     def shapes(self):
         """
         Instance of |LayoutShapes| containing the sequence of shapes
@@ -438,7 +439,7 @@ class SlideMaster(_BaseMaster):
     inherited from |_BaseMaster|.
     """
 
-    @lazyproperty
+    @cached_property
     def slide_layouts(self):
         """|SlideLayouts| object providing access to this slide-master's layouts."""
         return SlideLayouts(self._element.get_or_add_sldLayoutIdLst(), self)
@@ -491,7 +492,7 @@ class _Background(ElementProxy):
         super(_Background, self).__init__(cSld)
         self._cSld = cSld
 
-    @lazyproperty
+    @cached_property
     def fill(self):
         """|FillFormat| instance for this background.
 
