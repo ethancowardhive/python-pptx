@@ -2,14 +2,18 @@
 
 """Table-related objects such as Table and Cell."""
 
+from __future__ import annotations
+
 import copy
 from functools import cached_property
 
 from pptx.compat import is_integer
 from pptx.dml.fill import FillFormat
+from pptx.enum.text import MSO_VERTICAL_ANCHOR
 from pptx.oxml.table import TcRange
 from pptx.shapes import Subshape
 from pptx.text.text import TextFrame
+from pptx.util import Length
 
 
 class Table(object):
@@ -24,7 +28,7 @@ class Table(object):
         self._tbl = tbl
         self._graphic_frame = graphic_frame
 
-    def cell(self, row_idx, col_idx):
+    def cell(self, row_idx: int, col_idx: int):
         """Return cell at *row_idx*, *col_idx*.
 
         Return value is an instance of |_Cell|. *row_idx* and *col_idx* are
@@ -42,7 +46,7 @@ class Table(object):
         return _ColumnCollection(self._tbl, self)
 
     @property
-    def first_col(self):
+    def first_col(self) -> bool:
         """
         Read/write boolean property which, when true, indicates the first
         column should be formatted differently, as for a side-heading column
@@ -55,7 +59,7 @@ class Table(object):
         self._tbl.firstCol = value
 
     @property
-    def first_row(self):
+    def first_row(self) -> bool:
         """
         Read/write boolean property which, when true, indicates the first
         row should be formatted differently, e.g. for column headings.
@@ -67,7 +71,7 @@ class Table(object):
         self._tbl.firstRow = value
 
     @property
-    def horz_banding(self):
+    def horz_banding(self) -> bool:
         """
         Read/write boolean property which, when true, indicates the rows of
         the table should appear with alternating shading.
@@ -86,7 +90,7 @@ class Table(object):
         return (_Cell(tc, self) for tc in self._tbl.iter_tcs())
 
     @property
-    def last_col(self):
+    def last_col(self) -> bool:
         """
         Read/write boolean property which, when true, indicates the last
         column should be formatted differently, as for a row totals column at
@@ -99,7 +103,7 @@ class Table(object):
         self._tbl.lastCol = value
 
     @property
-    def last_row(self):
+    def last_row(self) -> bool:
         """
         Read/write boolean property which, when true, indicates the last
         row should be formatted differently, as for a totals row at the
@@ -145,7 +149,7 @@ class Table(object):
         return _RowCollection(self._tbl, self)
 
     @property
-    def vert_banding(self):
+    def vert_banding(self) -> bool:
         """
         Read/write boolean property which, when true, indicates the columns
         of the table should appear with alternating shading.
@@ -189,12 +193,12 @@ class _Cell(Subshape):
         return FillFormat.from_fill_parent(tcPr)
 
     @property
-    def is_merge_origin(self):
+    def is_merge_origin(self) -> bool:
         """True if this cell is the top-left grid cell in a merged cell."""
         return self._tc.is_merge_origin
 
     @property
-    def is_spanned(self):
+    def is_spanned(self) -> bool:
         """True if this cell is spanned by a merge-origin cell.
 
         A merge-origin cell "spans" the other grid cells in its merge range,
@@ -206,7 +210,7 @@ class _Cell(Subshape):
         return self._tc.is_spanned
 
     @property
-    def margin_left(self):
+    def margin_left(self) -> Length:
         """
         Read/write integer value of left margin of cell as a |Length| value
         object. If assigned |None|, the default value is used, 0.1 inches for
@@ -220,7 +224,7 @@ class _Cell(Subshape):
         self._tc.marL = margin_left
 
     @property
-    def margin_right(self):
+    def margin_right(self) -> Length:
         """
         Right margin of cell.
         """
@@ -232,7 +236,7 @@ class _Cell(Subshape):
         self._tc.marR = margin_right
 
     @property
-    def margin_top(self):
+    def margin_top(self) -> Length:
         """
         Top margin of cell.
         """
@@ -244,7 +248,7 @@ class _Cell(Subshape):
         self._tc.marT = margin_top
 
     @property
-    def margin_bottom(self):
+    def margin_bottom(self) -> Length:
         """
         Bottom margin of cell.
         """
@@ -255,7 +259,7 @@ class _Cell(Subshape):
         self._validate_margin_value(margin_bottom)
         self._tc.marB = margin_bottom
 
-    def merge(self, other_cell):
+    def merge(self, other_cell: _Cell):
         """Create merged cell from this cell to *other_cell*.
 
         This cell and *other_cell* specify opposite corners of the merged
@@ -287,7 +291,7 @@ class _Cell(Subshape):
             tc.vMerge = True
 
     @property
-    def span_height(self):
+    def span_height(self) -> int:
         """int count of rows spanned by this cell.
 
         The value of this property may be misleading (often 1) on cells where
@@ -299,7 +303,7 @@ class _Cell(Subshape):
         return self._tc.rowSpan
 
     @property
-    def span_width(self):
+    def span_width(self) -> int:
         """int count of columns spanned by this cell.
 
         The value of this property may be misleading (often 1) on cells where
@@ -365,7 +369,7 @@ class _Cell(Subshape):
         return TextFrame(txBody, self)
 
     @property
-    def vertical_anchor(self):
+    def vertical_anchor(self) -> MSO_VERTICAL_ANCHOR:
         """Vertical alignment of this cell.
 
         This value is a member of the :ref:`MsoVerticalAnchor` enumeration or
@@ -402,7 +406,7 @@ class _Column(Subshape):
         self._gridCol = gridCol
 
     @property
-    def width(self):
+    def width(self) -> Length:
         """
         Width of column in EMU.
         """
@@ -430,7 +434,7 @@ class _Row(Subshape):
         return _CellCollection(self._tr, self)
 
     @property
-    def height(self):
+    def height(self) -> Length:
         """
         Height of row in EMU.
         """
@@ -512,7 +516,7 @@ class _ColumnCollection(Subshape):
 
         return _Column(new_col, self)
 
-    def remove(self, column):
+    def remove(self, column: _Column):
         """
         Removes specified *column* (e.g. ``table.columns.remove(table.columns[0])``).
         """
@@ -566,7 +570,7 @@ class _RowCollection(Subshape):
 
         return _Row(new_row, self)
 
-    def remove(self, row):
+    def remove(self, row: _Row):
         """
         Removes specified *row* (e.g. ``table.rows.remove(table.rows[0])``).
         """

@@ -2,7 +2,10 @@
 
 """Slide-related objects, including masters, layouts, and notes."""
 
+from __future__ import annotations
+
 from functools import cached_property
+from typing import Iterator, Optional
 
 from pptx.dml.fill import FillFormat
 from pptx.enum.shapes import PP_PLACEHOLDER
@@ -275,7 +278,7 @@ class Slides(ParentedElementProxy):
         """
         return len(self._sldIdLst)
 
-    def add_slide(self, slide_layout):
+    def add_slide(self, slide_layout: SlideLayout) -> Slide:
         """
         Return a newly added slide that inherits layout from *slide_layout*.
         """
@@ -367,7 +370,7 @@ class SlideLayouts(ParentedElementProxy):
         super(SlideLayouts, self).__init__(sldLayoutIdLst, parent)
         self._sldLayoutIdLst = sldLayoutIdLst
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx) -> SlideLayout:
         """
         Provide indexed access, (e.g. ``slide_layouts[2]``).
         """
@@ -377,7 +380,7 @@ class SlideLayouts(ParentedElementProxy):
             raise IndexError("slide layout index out of range")
         return self.part.related_slide_layout(sldLayoutId.rId)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[SlideLayout]:
         """
         Generate a reference to each of the |SlideLayout| instances in the
         collection, in sequence.
@@ -391,14 +394,14 @@ class SlideLayouts(ParentedElementProxy):
         """
         return len(self._sldLayoutIdLst)
 
-    def get_by_name(self, name, default=None):
+    def get_by_name(self, name: str, default: Optional[SlideLayout] = None):
         """Return SlideLayout object having *name* or *default* if not found."""
         for slide_layout in self:
             if slide_layout.name == name:
                 return slide_layout
         return default
 
-    def index(self, slide_layout):
+    def index(self, slide_layout: SlideLayout):
         """Return zero-based index of *slide_layout* in this collection.
 
         Raises ValueError if *slide_layout* is not present in this collection.
@@ -408,7 +411,7 @@ class SlideLayouts(ParentedElementProxy):
                 return idx
         raise ValueError("layout not in this SlideLayouts collection")
 
-    def remove(self, slide_layout):
+    def remove(self, slide_layout: SlideLayout):
         """Remove *slide_layout* from the collection.
 
         Raises ValueError when *slide_layout* is in use; a slide layout which is the

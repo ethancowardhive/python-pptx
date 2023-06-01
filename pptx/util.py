@@ -4,8 +4,6 @@
 
 from __future__ import division
 
-import functools
-
 
 class Length(int):
     """
@@ -19,7 +17,7 @@ class Length(int):
     _EMUS_PER_MM = 36000
     _EMUS_PER_PT = 12700
 
-    def __new__(cls, emu):
+    def __new__(cls, emu: int):
         return int.__new__(cls, emu)
 
     @property
@@ -71,7 +69,7 @@ class Inches(Length):
     Convenience constructor for length in inches
     """
 
-    def __new__(cls, inches):
+    def __new__(cls, inches: float):
         emu = int(inches * Length._EMUS_PER_INCH)
         return Length.__new__(cls, emu)
 
@@ -81,7 +79,7 @@ class Centipoints(Length):
     Convenience constructor for length in hundredths of a point
     """
 
-    def __new__(cls, centipoints):
+    def __new__(cls, centipoints: float):
         emu = int(centipoints * Length._EMUS_PER_CENTIPOINT)
         return Length.__new__(cls, emu)
 
@@ -91,7 +89,7 @@ class Cm(Length):
     Convenience constructor for length in centimeters
     """
 
-    def __new__(cls, cm):
+    def __new__(cls, cm: float):
         emu = int(cm * Length._EMUS_PER_CM)
         return Length.__new__(cls, emu)
 
@@ -101,7 +99,7 @@ class Emu(Length):
     Convenience constructor for length in english metric units
     """
 
-    def __new__(cls, emu):
+    def __new__(cls, emu: float):
         return Length.__new__(cls, int(emu))
 
 
@@ -110,7 +108,7 @@ class Mm(Length):
     Convenience constructor for length in millimeters
     """
 
-    def __new__(cls, mm):
+    def __new__(cls, mm: float):
         emu = int(mm * Length._EMUS_PER_MM)
         return Length.__new__(cls, emu)
 
@@ -120,6 +118,6 @@ class Pt(Length):
     Convenience value class for specifying a length in points
     """
 
-    def __new__(cls, points):
+    def __new__(cls, points: float):
         emu = int(points * Length._EMUS_PER_PT)
         return Length.__new__(cls, emu)

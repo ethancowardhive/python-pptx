@@ -2,8 +2,11 @@
 
 """The shape tree, the structure that holds a slide's shapes."""
 
+from __future__ import annotations
+
 from functools import cached_property
 import os
+from typing import Optional
 
 from pptx.compat import BytesIO
 from pptx.enum.shapes import PP_PLACEHOLDER, PROG_ID
@@ -537,7 +540,7 @@ class SlideShapes(_BaseGroupShapes):
         self._add_video_timing(movie_pic)
         return self._shape_factory(movie_pic)
 
-    def add_table(self, rows, cols, left, top, width, height):
+    def add_table(self, rows, cols, left, top, width, height) -> GraphicFrame:
         """
         Add a |GraphicFrame| object containing a table with the specified
         number of *rows* and *cols* and the specified position and size.
@@ -550,7 +553,7 @@ class SlideShapes(_BaseGroupShapes):
             rows, cols, left, top, width, height
         )
         graphic_frame = self._shape_factory(graphicFrame)
-        return graphic_frame
+        return graphic_frame  # type: ignore
 
     def clone_layout_placeholders(self, slide_layout):
         """
@@ -562,7 +565,7 @@ class SlideShapes(_BaseGroupShapes):
             self.clone_placeholder(placeholder)
 
     @property
-    def placeholders(self):
+    def placeholders(self) -> SlidePlaceholders:
         """
         Instance of |SlidePlaceholders| containing sequence of placeholder
         shapes in this slide.
@@ -570,14 +573,14 @@ class SlideShapes(_BaseGroupShapes):
         return self.parent.placeholders
 
     @property
-    def title(self):
+    def title(self) -> Optional[SlidePlaceholder]:
         """
         The title placeholder shape on the slide or |None| if the slide has
         no title placeholder.
         """
         for elm in self._spTree.iter_ph_elms():
             if elm.ph_idx == 0:
-                return self._shape_factory(elm)
+                return self._shape_factory(elm)  # type: ignore
         return None
 
     def _add_graphicFrame_containing_table(self, rows, cols, x, y, cx, cy):

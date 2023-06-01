@@ -6,7 +6,7 @@ from functools import cached_property
 
 from pptx.opc.package import _Relationships
 from pptx.shared import PartElementProxy
-from pptx.slide import SlideMasters, Slides
+from pptx.slide import SlideLayouts, SlideMasters, Slides
 
 
 class Presentation(PartElementProxy):
@@ -57,7 +57,7 @@ class Presentation(PartElementProxy):
         sldSz.cy = height
 
     @property
-    def slide_layouts(self):
+    def slide_layouts(self) -> SlideLayouts:
         """
         Sequence of |SlideLayout| instances belonging to the first
         |SlideMaster| of this presentation. A presentation can have more than
