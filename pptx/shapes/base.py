@@ -5,10 +5,12 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from functools import cached_property
+from typing import Optional
 
 from pptx.action import ActionSetting
 from pptx.dml.effect import ShadowFormat
 from pptx.shared import ElementProxy
+from pptx.table import Table
 
 
 class BaseShape(object):
@@ -81,6 +83,15 @@ class BaseShape(object):
         # This implementation is unconditionally False, the True version is
         # on GraphicFrame subclass.
         return False
+
+    @property
+    def table(self) -> Optional[Table]:
+        """
+        The |Table| object containing this shape, or |None| if the shape is
+        not contained in a table.
+        """
+        # overridden on GraphicFrame to return Table
+        return None
 
     @property
     def has_text_frame(self):

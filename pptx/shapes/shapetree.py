@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from functools import cached_property
 import os
-from typing import Optional
+from typing import Iterator, Optional
 
 from pptx.compat import BytesIO
 from pptx.enum.shapes import PP_PLACEHOLDER, PROG_ID
@@ -84,7 +84,7 @@ class _BaseShapes(ParentedElementProxy):
             raise IndexError("shape index out of range")
         return self._shape_factory(shape_elm)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[BaseShape]:
         """
         Generate a reference to each shape in the collection, in sequence.
         """
@@ -495,6 +495,12 @@ class SlideShapes(_BaseGroupShapes):
     The first shape in the sequence is the backmost in z-order and the last
     shape is topmost. Supports indexed access, len(), index(), and iteration.
     """
+
+    def __iter__(self) -> Iterator[Shape]:
+        """
+        Generate a reference to each shape in the collection, in sequence.
+        """
+        return super().__iter__()  # type: ignore
 
     def add_movie(
         self,
