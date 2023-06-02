@@ -255,7 +255,7 @@ class Slides(ParentedElementProxy):
         super(Slides, self).__init__(sldIdLst, prs)
         self._sldIdLst = sldIdLst
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx) -> Slide:
         """
         Provide indexed access, (e.g. 'slides[0]').
         """
@@ -265,7 +265,7 @@ class Slides(ParentedElementProxy):
             raise IndexError("slide index out of range")
         return self.part.related_slide(sldId.rId)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Slide]:
         """
         Support iteration (e.g. 'for slide in slides:').
         """
