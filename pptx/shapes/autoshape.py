@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from functools import cached_property
 from numbers import Number
 
 from pptx.dml.fill import FillFormat
@@ -12,7 +13,6 @@ from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE, MSO_SHAPE_TYPE
 from pptx.shapes.base import BaseShape
 from pptx.spec import autoshape_types
 from pptx.text.text import TextFrame
-from pptx.util import lazyproperty
 
 
 class Adjustment(object):
@@ -282,7 +282,7 @@ class Shape(BaseShape):
         super(Shape, self).__init__(sp, parent)
         self._sp = sp
 
-    @lazyproperty
+    @cached_property
     def adjustments(self):
         """
         Read-only reference to |AdjustmentCollection| instance for this
@@ -301,7 +301,7 @@ class Shape(BaseShape):
             raise ValueError("shape is not an auto shape")
         return self._sp.prst
 
-    @lazyproperty
+    @cached_property
     def fill(self):
         """
         |FillFormat| instance for this shape, providing access to fill
@@ -324,7 +324,7 @@ class Shape(BaseShape):
         """
         return True
 
-    @lazyproperty
+    @cached_property
     def line(self):
         """
         |LineFormat| instance for this shape, providing access to line

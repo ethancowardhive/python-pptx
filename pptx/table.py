@@ -3,13 +3,13 @@
 """Table-related objects such as Table and Cell."""
 
 import copy
+from functools import cached_property
 
 from pptx.compat import is_integer
 from pptx.dml.fill import FillFormat
 from pptx.oxml.table import TcRange
 from pptx.shapes import Subshape
 from pptx.text.text import TextFrame
-from pptx.util import lazyproperty
 
 
 class Table(object):
@@ -32,7 +32,7 @@ class Table(object):
         """
         return _Cell(self._tbl.tc(row_idx, col_idx), self)
 
-    @lazyproperty
+    @cached_property
     def columns(self):
         """|_ColumnCollection| instance for this table.
 
@@ -135,7 +135,7 @@ class Table(object):
         """
         return self._graphic_frame.part
 
-    @lazyproperty
+    @cached_property
     def rows(self):
         """|_RowCollection| instance for this table.
 
@@ -179,7 +179,7 @@ class _Cell(Subshape):
             return True
         return self._tc is not other._tc
 
-    @lazyproperty
+    @cached_property
     def fill(self):
         """
         |FillFormat| instance for this cell, providing access to fill
@@ -321,7 +321,9 @@ class _Cell(Subshape):
         with `.is_merge_origin` before calling.
         """
         if not self.is_merge_origin:
-            raise ValueError("not a merge-origin cell; only a merge-origin cell can be sp" "lit")
+            raise ValueError(
+                "not a merge-origin cell; only a merge-origin cell can be sp" "lit"
+            )
 
         tc_range = TcRange.from_merge_origin(self._tc)
 
@@ -556,7 +558,9 @@ class _RowCollection(Subshape):
         (e.g. ``row = table.rows.add()``).
         Returns new |_Row| instance.
         """
-        new_row = copy.deepcopy(self._tbl.tr_lst[styleIndex])  # copies row element with styleIndex
+        new_row = copy.deepcopy(
+            self._tbl.tr_lst[styleIndex]
+        )  # copies row element with styleIndex
 
         self._tbl.insert(insertIndex, new_row)
 

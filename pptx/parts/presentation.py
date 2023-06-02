@@ -2,12 +2,13 @@
 
 """Presentation part, the main part in a .pptx package."""
 
+from functools import cached_property
+
 from pptx.opc.constants import RELATIONSHIP_TYPE as RT
 from pptx.opc.package import XmlPart
 from pptx.opc.packuri import PackURI
 from pptx.parts.slide import NotesMasterPart, SlidePart
 from pptx.presentation import Presentation
-from pptx.util import lazyproperty
 
 
 class PresentationPart(XmlPart):
@@ -45,7 +46,7 @@ class PresentationPart(XmlPart):
                 return self.related_part(sldId.rId).slide
         return None
 
-    @lazyproperty
+    @cached_property
     def notes_master(self):
         """
         Return the |NotesMaster| object for this presentation. If the
@@ -55,7 +56,7 @@ class PresentationPart(XmlPart):
         """
         return self.notes_master_part.notes_master
 
-    @lazyproperty
+    @cached_property
     def notes_master_part(self):
         """
         Return the |NotesMasterPart| object for this presentation. If the
@@ -70,7 +71,7 @@ class PresentationPart(XmlPart):
             self.relate_to(notes_master_part, RT.NOTES_MASTER)
             return notes_master_part
 
-    @lazyproperty
+    @cached_property
     def presentation(self):
         """
         A |Presentation| object providing access to the content of this

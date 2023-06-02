@@ -4,6 +4,8 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from functools import cached_property
+
 from pptx.enum.text import MSO_VERTICAL_ANCHOR
 from pptx.oxml import parse_xml
 from pptx.oxml.dml.fill import CT_GradientFillProperties
@@ -20,7 +22,7 @@ from pptx.oxml.xmlchemy import (
     ZeroOrOne,
     ZeroOrOneChoice,
 )
-from pptx.util import Emu, lazyproperty
+from pptx.util import Emu
 
 
 class CT_Table(BaseOxmlElement):
@@ -468,7 +470,7 @@ class TcRange(object):
         )
         return cls(tc, other_tc)
 
-    @lazyproperty
+    @cached_property
     def contains_merged_cell(self):
         """True if one or more cells in range are part of a merged cell."""
         for tc in self.iter_tcs():
@@ -482,13 +484,13 @@ class TcRange(object):
                 return True
         return False
 
-    @lazyproperty
+    @cached_property
     def dimensions(self):
         """(row_count, col_count) pair describing size of range."""
         _, _, width, height = self._extents
         return height, width
 
-    @lazyproperty
+    @cached_property
     def in_same_table(self):
         """True if both cells provided to constructor are in same table."""
         if self._tc.tbl is self._other_tc.tbl:
@@ -537,13 +539,13 @@ class TcRange(object):
         for spanned_tc in tcs[1:]:
             origin_tc.append_ps_from(spanned_tc)
 
-    @lazyproperty
+    @cached_property
     def _bottom(self):
         """Index of row following last row of range"""
         _, top, _, height = self._extents
         return top + height
 
-    @lazyproperty
+    @cached_property
     def _extents(self):
         """A (left, top, width, height) tuple describing range extents.
 
@@ -564,24 +566,24 @@ class TcRange(object):
 
         return left, top, width, height
 
-    @lazyproperty
+    @cached_property
     def _left(self):
         """Index of leftmost column in range"""
         left, _, _, _ = self._extents
         return left
 
-    @lazyproperty
+    @cached_property
     def _right(self):
         """Index of column following the last column in range"""
         left, _, width, _ = self._extents
         return left + width
 
-    @lazyproperty
+    @cached_property
     def _tbl(self):
         """`a:tbl` element containing this cell range"""
         return self._tc.tbl
 
-    @lazyproperty
+    @cached_property
     def _top(self):
         """Index of topmost row in range"""
         _, top, _, _ = self._extents

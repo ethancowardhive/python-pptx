@@ -11,3 +11,5 @@ _scratch/
 tags
 /tests/debug.py
 .idea
+.venv/
+.DS_Store

@@ -2,6 +2,8 @@
 
 """Chart-related objects such as Chart and ChartTitle."""
 
+from functools import cached_property
+
 from pptx.chart.axis import CategoryAxis, DateAxis, ValueAxis
 from pptx.chart.legend import Legend
 from pptx.chart.plot import PlotFactory, PlotTypeInspector
@@ -11,7 +13,6 @@ from pptx.compat import Sequence
 from pptx.dml.chtfmt import ChartFormat
 from pptx.shared import ElementProxy, PartElementProxy
 from pptx.text.text import Font, TextFrame
-from pptx.util import lazyproperty
 
 
 class Chart(PartElementProxy):
@@ -85,7 +86,7 @@ class Chart(PartElementProxy):
         first_plot = self.plots[0]
         return PlotTypeInspector.chart_type(first_plot)
 
-    @lazyproperty
+    @cached_property
     def font(self):
         """Font object controlling text format defaults for this chart."""
         defRPr = (
@@ -144,7 +145,7 @@ class Chart(PartElementProxy):
             return None
         return Legend(legend_elm)
 
-    @lazyproperty
+    @cached_property
     def plots(self):
         """
         The sequence of plots in this chart. A plot, called a *chart group*
@@ -170,7 +171,7 @@ class Chart(PartElementProxy):
         rewriter.replace_series_data(self._chartSpace)
         self._workbook.update_from_xlsx_blob(chart_data.xlsx_blob)
 
-    @lazyproperty
+    @cached_property
     def series(self):
         """
         A |SeriesCollection| object containing all the series in this
@@ -215,7 +216,7 @@ class ChartTitle(ElementProxy):
         super(ChartTitle, self).__init__(title)
         self._title = title
 
-    @lazyproperty
+    @cached_property
     def format(self):
         """|ChartFormat| object providing access to line and fill formatting.
 

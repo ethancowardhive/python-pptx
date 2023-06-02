@@ -2,6 +2,8 @@
 
 """Axis-related chart objects."""
 
+from functools import cached_property
+
 from pptx.dml.chtfmt import ChartFormat
 from pptx.enum.chart import (
     XL_AXIS_CROSSES,
@@ -13,7 +15,6 @@ from pptx.oxml.ns import qn
 from pptx.oxml.simpletypes import ST_Orientation
 from pptx.shared import ElementProxy
 from pptx.text.text import Font, TextFrame
-from pptx.util import lazyproperty
 
 
 class _BaseAxis(object):
@@ -35,7 +36,7 @@ class _BaseAxis(object):
         """
         return AxisTitle(self._element.get_or_add_title())
 
-    @lazyproperty
+    @cached_property
     def format(self):
         """
         The |ChartFormat| object providing access to the shape formatting
@@ -100,7 +101,7 @@ class _BaseAxis(object):
         else:
             self._element._remove_title()
 
-    @lazyproperty
+    @cached_property
     def major_gridlines(self):
         """
         The |MajorGridlines| object representing the major gridlines for
@@ -197,7 +198,7 @@ class _BaseAxis(object):
             ST_Orientation.MAX_MIN if bool(value) is True else ST_Orientation.MIN_MAX
         )
 
-    @lazyproperty
+    @cached_property
     def tick_labels(self):
         """
         The |TickLabels| instance providing access to axis tick label
@@ -249,7 +250,7 @@ class AxisTitle(ElementProxy):
         super(AxisTitle, self).__init__(title)
         self._title = title
 
-    @lazyproperty
+    @cached_property
     def format(self):
         """|ChartFormat| object providing access to shape formatting.
 
@@ -326,7 +327,7 @@ class MajorGridlines(ElementProxy):
         super(MajorGridlines, self).__init__(xAx)
         self._xAx = xAx  # axis element, catAx or valAx
 
-    @lazyproperty
+    @cached_property
     def format(self):
         """
         The |ChartFormat| object providing access to the shape formatting
@@ -343,7 +344,7 @@ class TickLabels(object):
         super(TickLabels, self).__init__()
         self._element = xAx_elm
 
-    @lazyproperty
+    @cached_property
     def font(self):
         """
         The |Font| object that provides access to the text properties for

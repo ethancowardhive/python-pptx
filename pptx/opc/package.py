@@ -7,6 +7,7 @@ presentations to and from a .pptx file.
 """
 
 import collections
+from functools import cached_property
 
 from pptx.compat import is_string, Mapping
 from pptx.opc.constants import RELATIONSHIP_TARGET_MODE as RTM, RELATIONSHIP_TYPE as RT
@@ -15,7 +16,6 @@ from pptx.opc.packuri import CONTENT_TYPES_URI, PACKAGE_URI, PackURI
 from pptx.opc.serialized import PackageReader, PackageWriter
 from pptx.opc.shared import CaseInsensitiveDict
 from pptx.oxml import parse_xml
-from pptx.util import lazyproperty
 
 
 class _RelatableMixin(object):
@@ -49,7 +49,7 @@ class _RelatableMixin(object):
         """Return URL contained in target ref of relationship identified by `rId`."""
         return self._rels[rId].target_ref
 
-    @lazyproperty
+    @cached_property
     def _rels(self):
         """|Relationships| object containing relationships from this part to others."""
         raise NotImplementedError(  # pragma: no cover
@@ -158,7 +158,7 @@ class OpcPackage(_RelatableMixin):
         self._rels.load_from_xml(PACKAGE_URI, pkg_xml_rels, parts)
         return self
 
-    @lazyproperty
+    @cached_property
     def _rels(self):
         """|Relationships| object containing relationships of this package."""
         return _Relationships(PACKAGE_URI.baseURI)
@@ -194,7 +194,7 @@ class _PackageLoader(object):
 
         return xml_rels["/"], parts
 
-    @lazyproperty
+    @cached_property
     def _content_types(self):
         """|_ContentTypeMap| object providing content-types for items of this package.
 
@@ -202,12 +202,12 @@ class _PackageLoader(object):
         """
         return _ContentTypeMap.from_xml(self._package_reader[CONTENT_TYPES_URI])
 
-    @lazyproperty
+    @cached_property
     def _package_reader(self):
         """|PackageReader| object providing access to package-items in pkg_file."""
         return PackageReader(self._pkg_file)
 
-    @lazyproperty
+    @cached_property
     def _parts(self):
         """dict {partname: Part} populated with parts loading from package.
 
@@ -233,7 +233,7 @@ class _PackageLoader(object):
             if partname in package_reader
         }
 
-    @lazyproperty
+    @cached_property
     def _xml_rels(self):
         """dict {partname: xml_rels} for package and all package parts.
 
@@ -315,7 +315,7 @@ class Part(_RelatableMixin):
         """
         self._blob = bytes_
 
-    @lazyproperty
+    @cached_property
     def content_type(self):
         """Content-type (MIME-type) of this part."""
         return self._content_type
@@ -339,7 +339,7 @@ class Part(_RelatableMixin):
         """
         self._rels.load_from_xml(self._partname.baseURI, xml_rels, parts)
 
-    @lazyproperty
+    @cached_property
     def package(self):
         """|OpcPackage| instance this part belongs to."""
         return self._package
@@ -358,7 +358,7 @@ class Part(_RelatableMixin):
             )
         self._partname = partname
 
-    @lazyproperty
+    @cached_property
     def rels(self):
         """|Relationships| collection of relationships from this part to other parts."""
         # --- this must be public to allow the part graph to be traversed ---
@@ -381,7 +381,7 @@ class Part(_RelatableMixin):
         """Return int count of references in this part's XML to `rId`."""
         return len([r for r in self._element.xpath("//@r:id") if r == rId])
 
-    @lazyproperty
+    @cached_property
     def _rels(self):
         """|Relationships| object containing relationships from this part to others."""
         return _Relationships(self._partname.baseURI)
@@ -639,7 +639,7 @@ class _Relationships(Mapping):
             if rId_candidate not in self._rels:
                 return rId_candidate
 
-    @lazyproperty
+    @cached_property
     def _rels(self):
         """dict {rId: _Relationship} containing relationships of this collection."""
         return dict()
@@ -673,7 +673,7 @@ class _Relationship(object):
         )
         return cls(base_uri, rel.rId, rel.reltype, rel.targetMode, target)
 
-    @lazyproperty
+    @cached_property
     def is_external(self):
         """True if target_mode is `RTM.EXTERNAL`.
 
@@ -682,12 +682,12 @@ class _Relationship(object):
         """
         return self._target_mode == RTM.EXTERNAL
 
-    @lazyproperty
+    @cached_property
     def reltype(self):
         """Member of RELATIONSHIP_TYPE describing relationship of target to source."""
         return self._reltype
 
-    @lazyproperty
+    @cached_property
     def rId(self):
         """str relationship-id, like 'rId9'.
 
@@ -697,7 +697,7 @@ class _Relationship(object):
         """
         return self._rId
 
-    @lazyproperty
+    @cached_property
     def target_part(self):
         """|Part| or subtype referred to by this relationship."""
         if self.is_external:
@@ -707,7 +707,7 @@ class _Relationship(object):
             )
         return self._target
 
-    @lazyproperty
+    @cached_property
     def target_partname(self):
         """|PackURI| instance containing partname targeted by this relationship.
 
@@ -721,7 +721,7 @@ class _Relationship(object):
             )
         return self._target.partname
 
-    @lazyproperty
+    @cached_property
     def target_ref(self):
         """str reference to relationship target.
 

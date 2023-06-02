@@ -4,11 +4,12 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from functools import cached_property
+
 from pptx.chart.datalabel import DataLabel
 from pptx.chart.marker import Marker
 from pptx.compat import Sequence
 from pptx.dml.chtfmt import ChartFormat
-from pptx.util import lazyproperty
 
 
 class _BasePoints(Sequence):
@@ -65,14 +66,14 @@ class Point(object):
         self._ser = ser
         self._idx = idx
 
-    @lazyproperty
+    @cached_property
     def data_label(self):
         """
         The |DataLabel| object representing the label on this data point.
         """
         return DataLabel(self._ser, self._idx)
 
-    @lazyproperty
+    @cached_property
     def format(self):
         """
         The |ChartFormat| object providing access to the shape formatting
@@ -81,7 +82,7 @@ class Point(object):
         dPt = self._ser.get_or_add_dPt_for_point(self._idx)
         return ChartFormat(dPt)
 
-    @lazyproperty
+    @cached_property
     def marker(self):
         """
         The |Marker| instance for this point, providing access to the visual

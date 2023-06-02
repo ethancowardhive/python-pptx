@@ -2,11 +2,12 @@
 
 """Chart part objects, including Chart and Charts."""
 
+from functools import cached_property
+
 from pptx.chart.chart import Chart
 from pptx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
 from pptx.opc.package import XmlPart
 from pptx.parts.embeddedpackage import EmbeddedXlsxPart
-from pptx.util import lazyproperty
 
 
 class ChartPart(XmlPart):
@@ -32,12 +33,12 @@ class ChartPart(XmlPart):
         chart_part.chart_workbook.update_from_xlsx_blob(chart_data.xlsx_blob)
         return chart_part
 
-    @lazyproperty
+    @cached_property
     def chart(self):
         """|Chart| object representing the chart in this part."""
         return Chart(self._element, self)
 
-    @lazyproperty
+    @cached_property
     def chart_workbook(self):
         """
         The |ChartWorkbook| object providing access to the external chart

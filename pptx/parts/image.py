@@ -4,6 +4,7 @@
 
 from __future__ import division
 
+from functools import cached_property
 import hashlib
 import os
 
@@ -15,7 +16,6 @@ except ImportError:
 from pptx.compat import BytesIO, is_string
 from pptx.opc.package import Part
 from pptx.opc.spec import image_content_types
-from pptx.util import lazyproperty
 
 
 class ImagePart(Part):
@@ -95,7 +95,7 @@ class ImagePart(Part):
 
         return scaled_cx, scaled_cy
 
-    @lazyproperty
+    @cached_property
     def sha1(self):
         """
         The SHA1 hash digest for the image binary of this image part, like:
@@ -179,14 +179,14 @@ class Image(object):
         """
         return self._blob
 
-    @lazyproperty
+    @cached_property
     def content_type(self):
         """
         MIME-type of this image, e.g. ``'image/jpeg'``.
         """
         return image_content_types[self.ext]
 
-    @lazyproperty
+    @cached_property
     def dpi(self):
         """
         A (horz_dpi, vert_dpi) 2-tuple specifying the dots-per-inch
@@ -221,7 +221,7 @@ class Image(object):
 
         return normalize_pil_dpi(self._pil_props[2])
 
-    @lazyproperty
+    @cached_property
     def ext(self):
         """
         Canonical file extension for this image e.g. ``'png'``. The returned
@@ -252,14 +252,14 @@ class Image(object):
         """
         return self._filename
 
-    @lazyproperty
+    @cached_property
     def sha1(self):
         """
         SHA1 hash digest of the image blob
         """
         return hashlib.sha1(self._blob).hexdigest()
 
-    @lazyproperty
+    @cached_property
     def size(self):
         """
         A (width, height) 2-tuple specifying the dimensions of this image in
@@ -274,7 +274,7 @@ class Image(object):
         """
         return self._pil_props[0]
 
-    @lazyproperty
+    @cached_property
     def _pil_props(self):
         """
         A tuple containing useful image properties extracted from this image

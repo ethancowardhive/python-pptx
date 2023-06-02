@@ -4,6 +4,8 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from functools import cached_property
+
 from pptx.compat import Sequence
 from pptx.dml.color import ColorFormat
 from pptx.enum.dml import MSO_FILL
@@ -16,7 +18,6 @@ from pptx.oxml.dml.fill import (
     CT_SolidColorFillProperties,
 )
 from pptx.shared import ElementProxy
-from pptx.util import lazyproperty
 
 
 class FillFormat(object):
@@ -263,7 +264,7 @@ class _GradFill(_Fill):
             raise ValueError("not a linear gradient")
         lin.ang = 360.0 - value
 
-    @lazyproperty
+    @cached_property
     def gradient_stops(self):
         """|_GradientStops| object providing access to gradient colors.
 
@@ -302,13 +303,13 @@ class _PattFill(_Fill):
         super(_PattFill, self).__init__()
         self._element = self._pattFill = pattFill
 
-    @lazyproperty
+    @cached_property
     def back_color(self):
         """Return |ColorFormat| object that controls background color."""
         bgClr = self._pattFill.get_or_add_bgClr()
         return ColorFormat.from_colorchoice_parent(bgClr)
 
-    @lazyproperty
+    @cached_property
     def fore_color(self):
         """Return |ColorFormat| object that controls foreground color."""
         fgClr = self._pattFill.get_or_add_fgClr()
@@ -340,7 +341,7 @@ class _SolidFill(_Fill):
         super(_SolidFill, self).__init__()
         self._solidFill = solidFill
 
-    @lazyproperty
+    @cached_property
     def fore_color(self):
         """Return |ColorFormat| object controlling fill color."""
         return ColorFormat.from_colorchoice_parent(self._solidFill)
@@ -379,7 +380,7 @@ class _GradientStop(ElementProxy):
         super(_GradientStop, self).__init__(gs)
         self._gs = gs
 
-    @lazyproperty
+    @cached_property
     def color(self):
         """Return |ColorFormat| object controlling stop color."""
         return ColorFormat.from_colorchoice_parent(self._gs)

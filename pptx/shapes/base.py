@@ -4,10 +4,11 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from functools import cached_property
+
 from pptx.action import ActionSetting
 from pptx.dml.effect import ShadowFormat
 from pptx.shared import ElementProxy
-from pptx.util import lazyproperty
 
 
 class BaseShape(object):
@@ -36,7 +37,7 @@ class BaseShape(object):
             return True
         return self._element is not other._element
 
-    @lazyproperty
+    @cached_property
     def click_action(self):
         """|ActionSetting| instance providing access to click behaviors.
 
@@ -166,7 +167,7 @@ class BaseShape(object):
     def rotation(self, value):
         self._element.rot = value
 
-    @lazyproperty
+    @cached_property
     def shadow(self):
         """|ShadowFormat| object providing access to shadow for this shape.
 

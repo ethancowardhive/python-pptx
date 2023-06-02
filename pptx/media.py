@@ -5,12 +5,12 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import base64
+from functools import cached_property
 import hashlib
 import os
 
 from .compat import is_string
 from .opc.constants import CONTENT_TYPE as CT
-from .util import lazyproperty
 
 
 class Video(object):
@@ -92,7 +92,7 @@ class Video(object):
             return self._filename
         return "movie.%s" % self.ext
 
-    @lazyproperty
+    @cached_property
     def sha1(self):
         """The SHA1 hash digest for the binary "file" of this video.
 

@@ -2,19 +2,20 @@
 
 """Overall .pptx package."""
 
+from functools import cached_property
+
 from pptx.opc.constants import RELATIONSHIP_TYPE as RT
 from pptx.opc.package import OpcPackage
 from pptx.opc.packuri import PackURI
 from pptx.parts.coreprops import CorePropertiesPart
 from pptx.parts.image import Image, ImagePart
 from pptx.parts.media import MediaPart
-from pptx.util import lazyproperty
 
 
 class Package(OpcPackage):
     """An overall .pptx package."""
 
-    @lazyproperty
+    @cached_property
     def core_properties(self):
         """Instance of |CoreProperties| holding read/write Dublin Core doc properties.
 
@@ -100,7 +101,7 @@ class Package(OpcPackage):
         """
         return self.main_document_part
 
-    @lazyproperty
+    @cached_property
     def _image_parts(self):
         """
         |_ImageParts| object providing access to the image parts in this
@@ -108,7 +109,7 @@ class Package(OpcPackage):
         """
         return _ImageParts(self)
 
-    @lazyproperty
+    @cached_property
     def _media_parts(self):
         """Return |_MediaParts| object for this package.
 

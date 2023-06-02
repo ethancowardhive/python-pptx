@@ -4,11 +4,12 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from functools import cached_property
+
 from pptx.dml.line import LineFormat
 from pptx.enum.shapes import MSO_SHAPE, MSO_SHAPE_TYPE, PP_MEDIA_TYPE
 from pptx.shapes.base import BaseShape
 from pptx.shared import ParentedElementProxy
-from pptx.util import lazyproperty
 
 
 class _BasePicture(BaseShape):
@@ -75,7 +76,7 @@ class _BasePicture(BaseShape):
         """
         return self._pic.get_or_add_ln()
 
-    @lazyproperty
+    @cached_property
     def line(self):
         """
         An instance of |LineFormat|, providing access to the properties of
@@ -100,7 +101,7 @@ class Movie(_BasePicture):
     represents the video before it is played.
     """
 
-    @lazyproperty
+    @cached_property
     def media_format(self):
         """The |_MediaFormat| object for this movie.
 

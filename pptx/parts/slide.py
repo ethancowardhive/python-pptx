@@ -2,6 +2,8 @@
 
 """Slide and related objects."""
 
+from functools import cached_property
+
 from pptx.enum.shapes import PROG_ID
 from pptx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
 from pptx.opc.package import XmlPart
@@ -11,7 +13,6 @@ from pptx.oxml.theme import CT_OfficeStyleSheet
 from pptx.parts.chart import ChartPart
 from pptx.parts.embeddedpackage import EmbeddedPackagePart
 from pptx.slide import NotesMaster, NotesSlide, Slide, SlideLayout, SlideMaster
-from pptx.util import lazyproperty
 
 
 class BaseSlidePart(XmlPart):
@@ -65,7 +66,7 @@ class NotesMasterPart(BaseSlidePart):
         notes_master_part.relate_to(theme_part, RT.THEME)
         return notes_master_part
 
-    @lazyproperty
+    @cached_property
     def notes_master(self):
         """
         Return the |NotesMaster| object that proxies this notes master part.
@@ -119,13 +120,13 @@ class NotesSlidePart(BaseSlidePart):
         notes_slide.clone_master_placeholders(notes_master_part.notes_master)
         return notes_slide_part
 
-    @lazyproperty
+    @cached_property
     def notes_master(self):
         """Return the |NotesMaster| object this notes slide inherits from."""
         notes_master_part = self.part_related_by(RT.NOTES_MASTER)
         return notes_master_part.notes_master
 
-    @lazyproperty
+    @cached_property
     def notes_slide(self):
         """Return the |NotesSlide| object that proxies this notes slide part."""
         return NotesSlide(self._element, self)
@@ -210,7 +211,7 @@ class SlidePart(BaseSlidePart):
             return False
         return True
 
-    @lazyproperty
+    @cached_property
     def notes_slide(self):
         """
         The |NotesSlide| instance associated with this slide. If the slide
@@ -223,7 +224,7 @@ class SlidePart(BaseSlidePart):
             notes_slide_part = self._add_notes_slide_part()
         return notes_slide_part.notes_slide
 
-    @lazyproperty
+    @cached_property
     def slide(self):
         """
         The |Slide| object representing this slide part.
@@ -264,7 +265,7 @@ class SlideLayoutPart(BaseSlidePart):
     Corresponds to package files ``ppt/slideLayouts/slideLayout[1-9][0-9]*.xml``.
     """
 
-    @lazyproperty
+    @cached_property
     def slide_layout(self):
         """
         The |SlideLayout| object representing this part.
@@ -292,7 +293,7 @@ class SlideMasterPart(BaseSlidePart):
         """
         return self.related_part(rId).slide_layout
 
-    @lazyproperty
+    @cached_property
     def slide_master(self):
         """
         The |SlideMaster| object representing this part.

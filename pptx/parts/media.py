@@ -2,10 +2,10 @@
 
 """MediaPart and related objects."""
 
+from functools import cached_property
 import hashlib
 
 from pptx.opc.package import Part
-from pptx.util import lazyproperty
 
 
 class MediaPart(Part):
@@ -28,7 +28,7 @@ class MediaPart(Part):
             media.blob,
         )
 
-    @lazyproperty
+    @cached_property
     def sha1(self):
         """The SHA1 hash digest for the media binary of this media part.
 
