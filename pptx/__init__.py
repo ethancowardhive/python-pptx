@@ -2,7 +2,7 @@
 
 """Initialization module for python-pptx package."""
 
-__version__ = "0.6.24.3"
+__version__ = "0.6.24.4"
 
 
 import sys
@@ -21,7 +21,13 @@ from pptx.parts.coreprops import CorePropertiesPart  # noqa: E402
 from pptx.parts.image import ImagePart  # noqa: E402
 from pptx.parts.media import MediaPart  # noqa: E402
 from pptx.parts.presentation import PresentationPart  # noqa: E402
-from pptx.parts.slide import NotesMasterPart, NotesSlidePart, SlideLayoutPart, SlideMasterPart, SlidePart  # noqa: E402
+from pptx.parts.slide import (
+    NotesMasterPart,
+    NotesSlidePart,
+    SlideLayoutPart,
+    SlideMasterPart,
+    SlidePart,
+)  # noqa: E402
 
 content_type_to_part_class_map = {
     CT.PML_PRESENTATION_MAIN: PresentationPart,
