@@ -7,15 +7,22 @@ provides some insulation so not so many classes in the other modules need to
 be named as internal (leading underscore).
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import (
+    annotations,
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+)
 
 import os
 
 from .opc.constants import CONTENT_TYPE as CT
 from .package import Package
+from .presentation import Presentation as _Presentation
 
 
-def Presentation(pptx=None):
+def Presentation(pptx=None) -> _Presentation:
     """
     Return a |Presentation| object loaded from *pptx*, where *pptx* can be
     either a path to a ``.pptx`` file (a string) or a file-like object. If
