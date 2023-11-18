@@ -23,7 +23,6 @@ thisdir = os.path.dirname(__file__)
 init_py = ascii_bytes_from(thisdir, "pptx", "__init__.py")
 readme = ascii_bytes_from(thisdir, "README.rst")
 history = ascii_bytes_from(thisdir, "HISTORY.rst")
-license = ascii_bytes_from(thisdir, "LICENSE")
 
 # Read the version from pptx.__version__ without importing the package
 # (and thus attempting to import packages it depends on that may not be
@@ -35,10 +34,10 @@ NAME = "python-pptx-valutico"
 VERSION = version
 DESCRIPTION = "Generate and manipulate Open XML PowerPoint (.pptx) files"
 KEYWORDS = "powerpoint ppt pptx office open xml"
-AUTHOR = "Andreas Steiner"
-AUTHOR_EMAIL = "a.steiner@valutico.ai"
-URL = "https://github.com/AndreasSteiner/python-pptx"
-LICENSE = "MIT License"
+AUTHOR = "Steve Canny & Andreas Steiner"
+AUTHOR_EMAIL = "python-pptx@googlegroups.com & a.steiner@valutico.ai"
+URL = "http://github.com/scanny/python-pptx & https://github.com/AndreasSteiner/python-pptx"
+LICENSE = "MIT"
 PACKAGES = find_packages(exclude=["tests", "tests.*"])
 PACKAGE_DATA = {"pptx": ["templates/*"]}
 
