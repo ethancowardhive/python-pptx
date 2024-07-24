@@ -2,6 +2,7 @@
 
 """Enumerations used by shapes and related objects."""
 
+from enum import Enum
 from functools import cached_property
 
 from pptx.enum.base import (
@@ -675,8 +676,7 @@ class MSO_CONNECTOR_TYPE(XmlEnumeration):
     )
 
 
-@alias("MSO")
-class MSO_SHAPE_TYPE(Enumeration):
+class MSO_SHAPE_TYPE(Enum):
     """
     Specifies the type of a shape
 
@@ -695,34 +695,34 @@ class MSO_SHAPE_TYPE(Enumeration):
         "http://msdn.microsoft.com/en-us/library/office/ff860759(v=office.15" ").aspx"
     )
 
-    __members__ = (
-        EnumMember("AUTO_SHAPE", 1, "AutoShape"),
-        EnumMember("CALLOUT", 2, "Callout shape"),
-        EnumMember("CANVAS", 20, "Drawing canvas"),
-        EnumMember("CHART", 3, "Chart, e.g. pie chart, bar chart"),
-        EnumMember("COMMENT", 4, "Comment"),
-        EnumMember("DIAGRAM", 21, "Diagram"),
-        EnumMember("EMBEDDED_OLE_OBJECT", 7, "Embedded OLE object"),
-        EnumMember("FORM_CONTROL", 8, "Form control"),
-        EnumMember("FREEFORM", 5, "Freeform"),
-        EnumMember("GROUP", 6, "Group shape"),
-        EnumMember("IGX_GRAPHIC", 24, "SmartArt graphic"),
-        EnumMember("INK", 22, "Ink"),
-        EnumMember("INK_COMMENT", 23, "Ink Comment"),
-        EnumMember("LINE", 9, "Line"),
-        EnumMember("LINKED_OLE_OBJECT", 10, "Linked OLE object"),
-        EnumMember("LINKED_PICTURE", 11, "Linked picture"),
-        EnumMember("MEDIA", 16, "Media"),
-        EnumMember("OLE_CONTROL_OBJECT", 12, "OLE control object"),
-        EnumMember("PICTURE", 13, "Picture"),
-        EnumMember("PLACEHOLDER", 14, "Placeholder"),
-        EnumMember("SCRIPT_ANCHOR", 18, "Script anchor"),
-        EnumMember("TABLE", 19, "Table"),
-        EnumMember("TEXT_BOX", 17, "Text box"),
-        EnumMember("TEXT_EFFECT", 15, "Text effect"),
-        EnumMember("WEB_VIDEO", 26, "Web video"),
-        ReturnValueOnlyEnumMember("MIXED", -2, "Mixed shape types"),
-    )
+    AUTO_SHAPE = 1
+    CALLOUT = 2
+    CANVAS = 20
+    CHART = 3
+    COMMENT = 4
+    DIAGRAM = 21
+    EMBEDDED_OLE_OBJECT = 7
+    FORM_CONTROL = 8
+    FREEFORM = 5
+    GROUP = 6
+    IGX_GRAPHIC = 24
+    INK = 22
+    INK_COMMENT = 23
+    LINE = 9
+    LINKED_OLE_OBJECT = 10
+    LINKED_PICTURE = 11
+    MEDIA = 16
+    OLE_CONTROL_OBJECT = 12
+    PICTURE = 13
+    PLACEHOLDER = 14
+    SCRIPT_ANCHOR = 18
+    TABLE = 19
+    TEXT_BOX = 17
+    TEXT_EFFECT = 15
+    WEB_VIDEO = 26
+    MIXED = -2
+
+MSO = MSO_SHAPE_TYPE
 
 
 class PP_MEDIA_TYPE(Enumeration):

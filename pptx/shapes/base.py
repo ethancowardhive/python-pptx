@@ -222,6 +222,15 @@ class BaseShape(object):
     def width(self, value):
         self._element.cx = value
 
+    @property
+    def text_frame(self):
+        """
+        Always |None| when accessed on BaseShape, overridden on |Shape| to return
+        a text frame.
+        """
+        # overidden on Shape to return a text frame.
+        return None
+
 
 class _PlaceholderFormat(ElementProxy):
     """

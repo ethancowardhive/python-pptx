@@ -545,6 +545,10 @@ class _RowCollection(Subshape):
         Supports len() function (e.g. 'len(rows) == 1').
         """
         return len(self._tbl.tr_lst)
+    
+    def __iter__(self):
+        """Provides iterability."""
+        return (_Row(tr, self) for tr in self._tbl.tr_lst)
 
     def notify_height_changed(self):
         """
