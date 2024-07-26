@@ -39,7 +39,7 @@ AUTHOR_EMAIL = "python-pptx@googlegroups.com & a.steiner@valutico.ai"
 URL = "http://github.com/scanny/python-pptx & https://github.com/AndreasSteiner/python-pptx"
 LICENSE = "MIT"
 PACKAGES = find_packages(exclude=["tests", "tests.*"])
-PACKAGE_DATA = {"pptx": ["templates/*"]}
+PACKAGE_DATA = {"pptx": ["templates/*", "py.typed"]}
 
 INSTALL_REQUIRES = ["lxml>=3.1.0", "Pillow>=3.3.2", "XlsxWriter>=0.5.7"]
 
