@@ -467,6 +467,10 @@ class _ColumnCollection(Subshape):
         """Supports len() function (e.g. 'len(columns) == 1')."""
         return len(self._tbl.tblGrid.gridCol_lst)
 
+    def __iter__(self):
+        """Provides iterability."""
+        return (_Column(gridCol, self) for gridCol in self._tbl.tblGrid.gridCol_lst)
+
     def notify_width_changed(self):
         """Called by a column when its width changes. Pass along to parent."""
         self._parent.notify_width_changed()
@@ -490,6 +494,10 @@ class _RowCollection(Subshape):
     def __len__(self):
         """Supports len() function (e.g. 'len(rows) == 1')."""
         return len(self._tbl.tr_lst)
+
+    def __iter__(self):
+        """Provides iterability."""
+        return (_Row(tr, self) for tr in self._tbl.tr_lst)
 
     def notify_height_changed(self):
         """Called by a row when its height changes. Pass along to parent."""
