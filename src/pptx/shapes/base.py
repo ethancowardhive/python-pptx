@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from pptx.oxml.shapes import ShapeElement
     from pptx.oxml.shapes.shared import CT_Placeholder
     from pptx.parts.slide import BaseSlidePart
+    from pptx.text.text import TextFrame
     from pptx.types import ProvidesPart
     from pptx.util import Length
 
@@ -213,6 +214,14 @@ class BaseShape(object):
     @width.setter
     def width(self, value: Length):
         self._element.cx = value
+
+    @property
+    def text_frame(self) -> TextFrame | None:
+        """The |TextFrame| object containing the text of this shape.
+        Always |None| on BaseShape.
+        """
+        # Overidden on Shape to return the correct TextFrame
+        return None
 
 
 class _PlaceholderFormat(ElementProxy):
