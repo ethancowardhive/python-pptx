@@ -141,6 +141,7 @@ class CONTENT_TYPE:
         "application/vnd.openxmlformats-officedocument.spreadsheetml.volatileDependencies+xml"
     )
     SML_WORKSHEET = "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"
+    SVG = "image/svg+xml"
     SWF = "application/x-shockwave-flash"
     TIFF = "image/tiff"
     VIDEO = "video/unknown"

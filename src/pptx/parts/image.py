@@ -5,6 +5,8 @@ from __future__ import annotations
 import hashlib
 import io
 import os
+import re
+import xml.etree.ElementTree as ET
 from typing import IO, TYPE_CHECKING, Any, cast
 
 from PIL import Image as PIL_Image
@@ -17,6 +19,71 @@ if TYPE_CHECKING:
     from pptx.opc.packuri import PackURI
     from pptx.package import Package
     from pptx.util import Length
+
+
+def parse_svg_dimensions(blob: bytes) -> tuple[int, int]:
+    """Return (width_px, height_px) parsed from an SVG’s width/height or viewBox."""
+
+    # 1) parse XML
+
+    try:
+        root = ET.fromstring(blob)
+
+    except ET.ParseError as e:
+        raise ValueError("Invalid SVG content") from e
+
+    # 2) ensure it’s actually <svg>
+
+    if not root.tag.lower().endswith("svg"):
+        raise ValueError("Not an SVG document")
+
+    # 3) helper to turn "10cm", "100px", "2in" → px
+
+    def parse_length(val: str) -> int:
+        units = {
+            "": 1,
+            "px": 1,
+            "in": 96,
+            "pt": 96 / 72,
+            "pc": 96 / 6,
+            "cm": 96 / 2.54,
+            "mm": 96 / 25.4,
+        }
+
+        m = re.match(r"^\s*([0-9]*\.?[0-9]+)\s*([a-zA-Z%]*)\s*$", val)
+
+        if not m:
+            raise ValueError(f"Invalid SVG length: {val!r}")
+
+        num, unit = m.groups()
+
+        unit = unit.lower()
+
+        if unit == "%" or unit not in units:
+            raise ValueError(f"Unsupported unit in SVG length: {unit!r}")
+
+        return int(round(float(num) * units[unit]))
+
+    # 4) try width/height attrs
+
+    w_attr, h_attr = root.get("width"), root.get("height")
+
+    if w_attr and h_attr:
+        return parse_length(w_attr), parse_length(h_attr)
+
+    # 5) fallback to viewBox="minX minY width height"
+
+    vb = root.get("viewBox")
+
+    if not vb:
+        raise ValueError("SVG missing both width/height and viewBox")
+
+    parts = vb.replace(",", " ").split()
+
+    if len(parts) != 4:
+        raise ValueError(f"Invalid viewBox: {vb!r}")
+
+    return int(round(float(parts[2]))), int(round(float(parts[3])))
 
 
 class ImagePart(Part):
@@ -49,6 +116,20 @@ class ImagePart(Part):
             package,
             image.blob,
             image.filename,
+        )
+
+    @classmethod
+    def new_svg(cls, package: Package, blob: bytes, filename: str | None = None) -> ImagePart:
+        """Return new |ImagePart| instance containing SVG image.
+
+        `blob` is the SVG image as a bytes object.
+        """
+        return cls(
+            package.next_image_partname("svg"),
+            image_content_types["svg"],
+            package,
+            blob,
+            filename,
         )
 
     @property
@@ -114,6 +195,9 @@ class ImagePart(Part):
     @property
     def _dpi(self) -> tuple[int, int]:
         """(horz_dpi, vert_dpi) pair representing the dots-per-inch resolution of this image."""
+        if self.ext == "svg":
+            # Assume 96 dpi for SVG
+            return (96, 96)
         image = Image.from_blob(self._blob)
         return image.dpi
 
@@ -135,6 +219,8 @@ class ImagePart(Part):
     @property
     def _px_size(self) -> tuple[int, int]:
         """A (width, height) 2-tuple representing the dimensions of this image in pixels."""
+        if self.ext == "svg":
+            return parse_svg_dimensions(self._blob)
         image = Image.from_blob(self._blob)
         return image.size
 
@@ -230,6 +316,7 @@ class Image(object):
             "PNG": "png",
             "TIFF": "tiff",
             "WMF": "wmf",
+            "SVG": "svg",
         }
         format = self._format
         if format not in ext_map:
@@ -262,9 +349,14 @@ class Image(object):
 
     @lazyproperty
     def _pil_props(self) -> tuple[str | None, tuple[int, int], tuple[int, int] | None]:
-        """tuple of image properties extracted from this image using Pillow."""
+        """tuple of image properties extracted from this image using Pillow,
+        or parsed directly for SVG images."""
+        # Parse SVG images directly
+        if self._filename and self._filename.lower().endswith(".svg"):
+            return self._svg_props
+
         stream = io.BytesIO(self._blob)
-        pil_image = PIL_Image.open(stream)  # pyright: ignore[reportUnknownMemberType]
+        pil_image = PIL_Image.open(stream)
         format = pil_image.format
         width_px, height_px = pil_image.size
         dpi = cast(
@@ -273,3 +365,15 @@ class Image(object):
         )
         stream.close()
         return (format, (width_px, height_px), dpi)
+
+    @lazyproperty
+    def _svg_props(self) -> tuple[str, tuple[int, int], tuple[int, int]]:
+        """Extract (format, (pxw, pxh), (dpi_x, dpi_y)) directly from an SVG."""
+        # office clients generally assume 96 dpi for SVG
+        DEFAULT_DPI = (96, 96)
+
+        # Parse the SVG file
+        width_px, height_px = parse_svg_dimensions(self._blob)
+
+        # 4) return the pseudo‐PIL tuple
+        return ("SVG", (width_px, height_px), DEFAULT_DPI)

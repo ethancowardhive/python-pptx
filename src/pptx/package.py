@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from typing import IO, Iterator
 
 from pptx.opc.constants import RELATIONSHIP_TYPE as RT
@@ -29,13 +30,13 @@ class Package(OpcPackage):
             self.relate_to(core_props, RT.CORE_PROPERTIES)
             return core_props
 
-    def get_or_add_image_part(self, image_file: str | IO[bytes]):
+    def get_or_add_image_part(self, image_file: str | IO[bytes], is_svg: bool = False):
         """
         Return an |ImagePart| object containing the image in *image_file*. If
         the image part already exists in this package, it is reused,
         otherwise a new one is created.
         """
-        return self._image_parts.get_or_add_image_part(image_file)
+        return self._image_parts.get_or_add_image_part(image_file, is_svg=is_svg)
 
     def get_or_add_media_part(self, media):
         """Return a |MediaPart| object containing the media in *media*.
@@ -125,7 +126,7 @@ class Package(OpcPackage):
 class _ImageParts(object):
     """Provides access to the image parts in a package."""
 
-    def __init__(self, package):
+    def __init__(self, package: Package):
         super(_ImageParts, self).__init__()
         self._package = package
 
@@ -143,16 +144,29 @@ class _ImageParts(object):
             image_parts.append(image_part)
             yield image_part
 
-    def get_or_add_image_part(self, image_file: str | IO[bytes]) -> ImagePart:
+    def get_or_add_image_part(self, image_file: str | IO[bytes], is_svg: bool = False) -> ImagePart:
         """Return |ImagePart| object containing the image in `image_file`.
 
         `image_file` can be either a path to an image file or a file-like object
         containing an image. If an image part containing this same image already exists,
         that instance is returned, otherwise a new image part is created.
         """
-        image = Image.from_file(image_file)
-        image_part = self._find_by_sha1(image.sha1)
-        return image_part if image_part else ImagePart.new(self._package, image)
+        if not is_svg:
+            image = Image.from_file(image_file)  # This is where SVGs are erroring
+            image_part = self._find_by_sha1(image.sha1)
+            return image_part if image_part else ImagePart.new(self._package, image)
+        else:
+            # Calculate the SHA1 of the SVG file
+            if isinstance(image_file, str):
+                with open(image_file, "rb") as f:
+                    blob = f.read()
+            else:
+                if callable(getattr(image_file, "seek")):
+                    image_file.seek(0)
+                blob = image_file.read()
+            sha1 = hashlib.sha1(blob).hexdigest()
+            image_part = self._find_by_sha1(sha1)
+            return image_part if image_part else ImagePart.new_svg(self._package, blob)
 
     def _find_by_sha1(self, sha1: str) -> ImagePart | None:
         """

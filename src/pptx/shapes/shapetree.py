@@ -287,7 +287,8 @@ class _BaseGroupShapes(_BaseShapes):
         grpSp = self._element.add_grpSp()
         for shape in shapes:
             grpSp.insert_element_before(
-                shape._element, "p:extLst"  # pyright: ignore[reportPrivateUsage]
+                shape._element,  # pyright: ignore[reportPrivateUsage]
+                "p:extLst",
             )
         if shapes:
             grpSp.recalculate_extents()
@@ -357,6 +358,7 @@ class _BaseGroupShapes(_BaseShapes):
         top: Length,
         width: Length | None = None,
         height: Length | None = None,
+        is_svg: bool = False,
     ) -> Picture:
         """Add picture shape displaying image in `image_file`.
 
@@ -367,7 +369,7 @@ class _BaseGroupShapes(_BaseShapes):
         If both are specified, the picture is stretched to fit, without regard to its native
         aspect ratio.
         """
-        image_part, rId = self.part.get_or_add_image_part(image_file)
+        image_part, rId = self.part.get_or_add_image_part(image_file, is_svg=is_svg)
         pic = self._add_pic_from_image_part(image_part, rId, left, top, width, height)
         self._recalculate_extents()
         return cast(Picture, self._shape_factory(pic))

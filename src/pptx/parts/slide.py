@@ -40,14 +40,14 @@ class BaseSlidePart(XmlPart):
         """
         return cast("ImagePart", self.related_part(rId)).image
 
-    def get_or_add_image_part(self, image_file: str | IO[bytes]):
+    def get_or_add_image_part(self, image_file: str | IO[bytes], is_svg: bool = False):
         """Return `(image_part, rId)` pair corresponding to `image_file`.
 
         The returned |ImagePart| object contains the image in `image_file` and is
         related to this slide with the key `rId`. If either the image part or
         relationship already exists, they are reused, otherwise they are newly created.
         """
-        image_part = self._package.get_or_add_image_part(image_file)
+        image_part = self._package.get_or_add_image_part(image_file, is_svg=is_svg)
         rId = self.relate_to(image_part, RT.IMAGE)
         return image_part, rId
 
